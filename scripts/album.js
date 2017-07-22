@@ -36,7 +36,7 @@ var getSongNumberCell = function(number) {
         '<tr class="album-view-song-item">'
       + '  <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
       + '  <td class="song-item-title">' + songName + '</td>'
-      + '  <td class="song-item-duration">' + songLength + '</td>'
+      + '  <td class="song-item-duration">' + filterTimeCode(songLength) + '</td>'
       + '</tr>'
       ;
 
@@ -62,7 +62,7 @@ var getSongNumberCell = function(number) {
           var $volumeThumb = $('.volume .thumb');
           $volumeFill.width(currentVolume + '%');
           $volumeThumb.css({left: currentVolume + '%'});
-          
+
         }
         else if (currentlyPlayingSongNumber === songNumber) {
       		// Switch from Pause -> Play button to pause currently playing song.
@@ -145,6 +145,7 @@ var setCurrentAlbum = function(album) {
               var $seekBar = $('.seek-control .seek-bar');
 
               updateSeekPercentage($seekBar, seekBarFillRatio);
+              setCurrentTimeInPlayerBar();
           });
       }
   };
@@ -212,9 +213,11 @@ var setCurrentAlbum = function(album) {
 
  var updatePlayerBarSong = function() {
 
+      setTotalTimeInPlayerBar();
      $('.currently-playing .song-name').text(currentSongFromAlbum.title);
      $('.currently-playing .artist-name').text(currentAlbum.artist);
      $('.currently-playing .artist-song-mobile').text(currentSongFromAlbum.title + " - " + currentAlbum.artist);
+
 
      $('.main-controls .play-pause').html(playerBarPauseButton);
  };
@@ -286,6 +289,20 @@ var setCurrentAlbum = function(album) {
    }
  };
 
+  var setCurrentTimeInPlayerBar = function(currentTime){
+    $('.current-time').html(filterTimeCode(currentSoundFile.getTime()));
+  };
+
+  var setTotalTimeInPlayerBar = function(totalTime){
+    $('.total-time').html(filterTimeCode(currentSongFromAlbum.duration));
+  };
+
+  var filterTimeCode = function(timeInSeconds){
+    parseFloat(timeInSeconds);
+    var minutes = Math.floor(timeInSeconds/60);
+    timeInSeconds -= minutes*60;
+    return (minutes + ':' + ('0' + Math.floor(timeInSeconds)).slice(-2));
+  };
 
 
 
@@ -302,6 +319,9 @@ var setCurrentAlbum = function(album) {
  var currentSongFromAlbum = null;
  var currentSoundFile = null;
  var currentVolume = 80;
+
+
+
 
  var $previousButton = $('.main-controls .previous');
  var $nextButton = $('.main-controls .next');
